@@ -8,8 +8,8 @@ const Schema = mongoose.Schema;
 //Create a book schema
 const bookSchema = new Schema ({
     author: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     title: {
         type: String,
