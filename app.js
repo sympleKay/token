@@ -47,7 +47,7 @@ app.post('/register', urlencoded, async (req, res) => {
         const {username, password} = req.body;
 
         //Check if empty
-        if (!error || !password) {
+        if (!username || !password) {
             errors.push({msg: 'Both fields are required'});
         }
         //Create new user
@@ -65,7 +65,7 @@ app.post('/register', urlencoded, async (req, res) => {
                             if (err) {
                                 throw err;
                             } else {
-                                req.flash('error', 'Registration successful, log in');
+                                res.status(200);
                                 res.redirect('/login');
                             }
                         })
@@ -73,7 +73,7 @@ app.post('/register', urlencoded, async (req, res) => {
                 })
     } catch (error) {
         console.log(err);
-        res.render('error/500')
+        res.status(500)
     }
 })
 
