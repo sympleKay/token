@@ -21,7 +21,7 @@ const bookSchema = new Schema ({
     }
 }, {timestamps: true})
 
-//model on userSchema
+//model on bookSchema
 let Book = mongoose.model('Book', bookSchema);
 
 //export model
