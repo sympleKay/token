@@ -80,8 +80,8 @@ app.post('/register', urlencoded, async (req, res) => {
 //login endpoint
 app.post('/login', urlencoded, (req, res, next) => {
     passport.authenticate('local', {
-        successRedirect: '/member/dashboard',
-        failureRedirect: '/member/login',
+        successRedirect: '/',
+        failureRedirect: '/',
         failureFlash: true
     }) (req, res, next);
 })
