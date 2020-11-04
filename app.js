@@ -96,14 +96,14 @@ app.post('/login', urlencoded, (req, res, next) => {
 })
 
 
-app.post('/print/:pages', ensureAuth, urlencoded, (req, res) => {
+app.post('/print/:pages', (req, res) => {
     const pages = req.params.pages;
     let token = [];
     for (let i = 1; i <= pages; i++) {
         let randomNum = random('0', 6);
         token.push(randomNum);
     }
-    fs.appendFile('./upload/token.csv', [token], (err) => {
+    fs.appendFile('./token.csv', [token], (err) => {
         if (err) {
             throw err;
         }
