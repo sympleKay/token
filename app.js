@@ -37,7 +37,7 @@ require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
-let PORT = 3000 || process.env.PORT;
+let PORT = 5000 || process.env.PORT;
 
 function ensureAuth (req, res, next) {
     if (req.isAuthenticated()) {
@@ -96,22 +96,19 @@ app.post('/login', urlencoded, (req, res, next) => {
 })
 
 
-app.get('/print',  urlencoded, (req, res) => {
-    let pages = 50;
+app.post('/print/:pages', ensureAuth, urlencoded, (req, res) => {
+    const pages = req.params.pages;
     let token = [];
     for (let i = 1; i <= pages; i++) {
         let randomNum = random('0', 6);
         token.push(randomNum);
     }
-    console.log(token, token.length);
-    fs.writeFile('./token.csv', token, (err, doc) => {
+    fs.appendFile('./upload/token.csv', [token], (err) => {
         if (err) {
             throw err;
-        } else {
-            console.log(doc);
         }
     })
-    res.send(token);
+    res.status(201).send(token);
 })
 
 app.listen(PORT, () => {
