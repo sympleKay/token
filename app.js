@@ -1,11 +1,12 @@
 const express = require ('express');
 const bcrypt = require ('bcryptjs');
 const bodyParser = require ('body-parser');
-const jwt = require('jsonwebtoken');
+const random = require('randomatic');
 const fs = require ('fs');
 const mongoose = require('mongoose');
+const passport = require('passport');
 const User = require ('./model/user');
-const User = require ('./model/books');
+const Book = require ('./model/books');
 const app = express();
 
 const MONGOURI = 'mongodb://127.0.0.1:27017/token';
@@ -38,6 +39,14 @@ app.use(passport.session());
 
 let PORT = 3000 || process.env.PORT;
 
+function ensureAuth (req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        res.redirect('/login');
+    }
+}
+
 app.post('/register', urlencoded, async (req, res) => {
     try {
         //error messages
@@ -47,7 +56,7 @@ app.post('/register', urlencoded, async (req, res) => {
         const {username, password} = req.body;
 
         //Check if empty
-        if (!username || !password) {
+        if (!error || !password) {
             errors.push({msg: 'Both fields are required'});
         }
         //Create new user
@@ -65,7 +74,7 @@ app.post('/register', urlencoded, async (req, res) => {
                             if (err) {
                                 throw err;
                             } else {
-                                res.status(200);
+                                req.flash('error', 'Registration successful, log in');
                                 res.redirect('/login');
                             }
                         })
@@ -73,25 +82,36 @@ app.post('/register', urlencoded, async (req, res) => {
                 })
     } catch (error) {
         console.log(err);
-        res.status(500)
+        res.status(500).send('Server error');
     }
 })
 
 //login endpoint
 app.post('/login', urlencoded, (req, res, next) => {
     passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/',
+        successRedirect: '/member/dashboard',
+        failureRedirect: '/member/login',
         failureFlash: true
     }) (req, res, next);
 })
 
-app.get('/print', (req, res) => {
-    if(!req.user) {
-        console.log('You need to be login');
-    } else {
-        jw
+
+app.get('/print',  urlencoded, (req, res) => {
+    let pages = 50;
+    let token = [];
+    for (let i = 1; i <= pages; i++) {
+        let randomNum = random('0', 6);
+        token.push(randomNum);
     }
+    console.log(token, token.length);
+    fs.writeFile('./token.csv', token, (err, doc) => {
+        if (err) {
+            throw err;
+        } else {
+            console.log(doc);
+        }
+    })
+    res.send(token);
 })
 
 app.listen(PORT, () => {
